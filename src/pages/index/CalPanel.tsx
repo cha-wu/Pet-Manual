@@ -1,6 +1,7 @@
 import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
-import { View, Text, Input, Textarea } from '@tarojs/components'
+import { View, Text, Input, Textarea, Image } from '@tarojs/components'
 import { CAL_PETS, CAL_MEMBERS, CalRecord, CalTodo } from './data'
+import pawHandlePng from '../../assets/cal-paw-handle.png'
 
 const pad = (n: number) => (n < 10 ? '0' + n : '' + n)
 const fmt = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
@@ -161,7 +162,9 @@ export default function CalPanel({ onToast, records, todos, onRecordsChange: set
     <View className='cal-module-content' id='calModuleContent'>
       <View className={`cal-bookmark${calOpen ? ' open' : ''}${bmBounce ? ' bounce' : ''}`} id='calBookmark'
         onClick={(e) => { e.stopPropagation(); toggleCal() }}
-        onAnimationEnd={() => setBmBounce(false)}></View>
+        onAnimationEnd={() => setBmBounce(false)}>
+        <Image className='cal-bookmark-img' src={pawHandlePng} mode='aspectFit' />
+      </View>
 
       <View className={`cal-dropdown${calOpen ? ' open' : ''}`} id='calDropdown'>
         <View className='cal-dd-content'>
