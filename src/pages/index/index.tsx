@@ -331,14 +331,7 @@ export default function Index() {
 
   return (
     <View className='app' id='app' {...{ 'data-page': String(bookPage) }}>
-      <View className='statusbar'>
-        <Text className='span'>9:41</Text>
-        <View className='system-status'>
-          <View className='signal'><Text className='i' /><Text className='i' /><Text className='i' /><Text className='i' /></View>
-          <Text className='span'>▰</Text>
-          <View className='battery' />
-        </View>
-      </View>
+      {/* 模拟状态栏已删除：微信开发者工具/真机自带系统状态栏，避免重复显示 */}
 
       {/* 首次使用引导（问询页） */}
       {onboardingOpen && (

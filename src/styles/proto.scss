@@ -113,8 +113,17 @@
       letter-spacing: 0;
     }
 
+    /* 微信原生 button 的垂直居中依赖默认 line-height(2.55em)，
+       上方 font:inherit 把它重置成 normal 后文字会顶到按钮上沿。
+       这里用 flex 居中 + line-height:1 修正（对 H5 无副作用） */
     button {
       color: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+      vertical-align: middle;
     }
 
     .app {
