@@ -4808,8 +4808,8 @@
     .cal-rec-pet { font-size: 12px; font-weight: 700; color: var(--ink); }
     .cal-rec-time { font-size: 11px; color: var(--muted); margin-left: auto; }
     .cal-rec-text { font-size: 13.5px; color: var(--ink); margin-top: 6px; line-height: 1.6; }
-    .cal-rec-imgs { display: flex; gap: 8px; margin-top: 8px; }
-    .cal-rec-imgs .img-thumb { width: 64px; height: 64px; border-radius: 10px; background: #E8F4F8; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #D0E8F0; }
+    .cal-rec-imgs { display: grid; gap: 8px; margin-top: 8px; }
+    .cal-rec-imgs .img-thumb { width: 100%; height: auto; aspect-ratio: 1 / 1; border-radius: 10px; background: #E8F4F8; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #D0E8F0; box-sizing: border-box; }
     .cal-rec-by { font-size: 11px; color: var(--muted); margin-top: 6px; }
     .cal-rec-row.todo .cal-btn-done { align-self: center; background: #5BB89E; color: #fff; border: 0; border-radius: 14px; font-size: 12px; font-weight: 600; padding: 7px 12px; cursor: pointer; white-space: nowrap; }
     .cal-rec-row.todo .cal-btn-done:hover { background: #4AA088; }
@@ -5319,8 +5319,8 @@
     }
     .floating-family-button:active { transform: scale(0.94); background: rgba(255,255,255,0.45); }
 
-    /* 4) AI 提问框与导航栏距离太近 → 底部外边距 72px 增到 96px（上移 24px） */
-    .ask-input-bar { margin: 0 12px 96px; }
+    /* 4) AI 提问框与导航栏距离太近 → 继续上移到底部导航栏上方（含全面屏安全区） */
+    .ask-input-bar { margin: 0 12px calc(122px + env(safe-area-inset-bottom)); }
 
     /* 5) 档案册与导航栏距离太近 → 书整体上移（top 50% → 46%） */
     .book { top: 46%; }
@@ -5372,7 +5372,7 @@
       -webkit-backdrop-filter: none;
     }
 
-    /* 2) 档案封面：毛玻璃效果完全去除，封面图原色直出；文字加白色描边阴影保可读 */
+    /* 2) 档案封面：毛玻璃效果完全去除，封面图原色直出；文字用正常字体与主题色，不加模糊描边 */
     .cover { backdrop-filter: none; -webkit-backdrop-filter: none; }
     .cover-copy {
       backdrop-filter: none;
@@ -5380,8 +5380,15 @@
       background: transparent;
       border: none;
       box-shadow: none;
-      text-shadow: 0 1px 3px rgba(255, 255, 255, 0.85), 0 0 8px rgba(255, 255, 255, 0.6);
+      text-shadow: none;
     }
+    .cover h1, .cover .h1,
+    .cover-meta, .cover-quote {
+      font-family: "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+      letter-spacing: 0;
+    }
+    .cover h1, .cover .h1 { color: #2A2520; font-weight: 700; font-size: 32px; }
+    .cover-meta, .cover-quote { color: rgba(42,37,32,0.82); }
 
     /* 3) 日历下拉框：展开后内容可滚动由 .cal-dd-content 自身承担（见版本三十六），
        容器不再设 overflow（.cal-dropdown 须保持可见，猫爪书签挂在容器外沿） */
@@ -6321,8 +6328,14 @@
     }
 
     /* ===== 版本五十五：成长足迹事件记录可滑动 ===== */
+    /* 让时间线占满书页剩余高度，内容超出时纵向滚动 */
+    .growth-page .page-scroll {
+      display: flex;
+      flex-direction: column;
+    }
     #growthTimeline {
-      max-height: 340px;
+      flex: 1;
+      min-height: 0;
       overflow-y: auto;
       overscroll-behavior: contain;
       padding-right: 4px;
@@ -6341,10 +6354,16 @@
       word-break: break-word;
     }
 
-    /* ===== 版本五十七：成长足迹悬浮按钮避开底部导航栏 ===== */
+    /* ===== 版本五十七：成长足迹悬浮按钮移到左侧并避开底部导航栏 ===== */
     /* 导航栏 bottom = 10px + 安全区，总高约 64px；按钮抬到导航栏上方（含全面屏安全区） */
     .cal-fab.growth-fab {
+      right: auto;
+      left: 18px;
       bottom: calc(104px + env(safe-area-inset-bottom));
+    }
+    /* 日历添加按钮同样上移，避免被底部导航栏遮挡 */
+    #calFab {
+      bottom: calc(112px + env(safe-area-inset-bottom));
     }
 
 /* ============================================================
