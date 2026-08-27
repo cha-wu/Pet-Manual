@@ -23,6 +23,7 @@ import {
   Image as TaroImage,
   Picker as TaroPicker,
   RichText as TaroRichText,
+  ScrollView as TaroScrollView,
 } from '@tarojs/components'
 
 const IS_H5 = process.env.TARO_ENV === 'h5'
@@ -117,6 +118,18 @@ export const Image = (props: AnyProps) => {
   }
   const objectFit = mode === 'aspectFill' ? 'cover' : mode === 'aspectFit' ? 'contain' : 'fill'
   return <img className={cls} src={src} style={{ objectFit, ...style }} {...rest} />
+}
+
+/**
+ * ScrollView：可滚动容器。
+ *  - H5 端：普通 <div>（滚动由 CSS 的 overflow/max-height 规则驱动，与原型完全一致）；
+ *  - 小程序端：Taro ScrollView（原生 scroll-view 组件）——小程序里普通 view 的
+ *              CSS overflow 滚动在真机/工具上不可靠，原生 scroll-view 才能保证触摸滑动。
+ */
+export const ScrollView = (props: AnyProps) => {
+  const { children, ...rest } = props
+  if (!IS_H5) return <TaroScrollView scrollY enhanced showScrollbar={false} {...rest}>{children}</TaroScrollView>
+  return <div {...rest}>{children}</div>
 }
 
 /**

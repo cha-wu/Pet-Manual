@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Input, Textarea } from '@tarojs/components'
-import { View, Text, Button, Html } from '../../components/compat'
+import { View, Text, Button, Html, ScrollView } from '../../components/compat'
 import { PETS, CHAPTER_NAMES, CAL_PETS, PetRecord, CalRecord, CalTodo } from './data'
 import * as PetAPI from '../../services/pet'
 import { apiPersonalityToRecord, apiHealthToRecord, apiBirthdaysToRecord, apiGrowthToRecord } from '../../services/mappers'
@@ -346,7 +346,8 @@ export default function ManualPanel({ pet, page: current, onTurn, onToast, onAdd
               <View className='growth-events-head'>
                 <Text className='growth-section-title h3'>事件记录</Text>
               </View>
-              <View className='timeline' id='growthTimeline'>
+              {/* 时间线用 ScrollView：小程序端原生 scroll-view 保证可滑动，H5 端还原为普通 div（滚动样式由 #growthTimeline 规则驱动） */}
+              <ScrollView className='timeline' id='growthTimeline'>
                 {(() => {
                   const allEvents = [...gmEvents, ...petEvents].sort((a, b) => b.date.localeCompare(a.date))
                   if (allEvents.length === 0) {
@@ -361,7 +362,7 @@ export default function ManualPanel({ pet, page: current, onTurn, onToast, onAdd
                     </View>
                   ))
                 })()}
-              </View>
+              </ScrollView>
             </View>
           </View>
 
@@ -381,7 +382,7 @@ export default function ManualPanel({ pet, page: current, onTurn, onToast, onAdd
 
       {/* 成长足迹：添加事件按钮（放档案书外，与宠物日历的悬浮添加按钮同款） */}
       {current === 5 && (
-        <View className='cal-fab' id='growthFab'>
+        <View className='cal-fab growth-fab' id='growthFab'>
           <View className='cal-fab-btn' id='growthAddBtn' onClick={openGm}>＋</View>
         </View>
       )}

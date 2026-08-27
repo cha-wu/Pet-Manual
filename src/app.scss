@@ -32,9 +32,9 @@ taro-page-core {
   background: url('./assets/onboarding-bg.jpg') center / cover no-repeat;
 }
 
-/* 用户指定：日历下拉展开时，猫爪书签紧贴下拉下边沿一起下移
-   （top 值由 CalPanel 按下拉实际高度动态设置，这里补上与下拉同步的过渡） */
+/* 用户指定：日历下拉展开时，猫爪书签紧贴下拉下边沿一起下移。
+   现由纯 CSS 实现（.cal-dropdown .cal-bookmark { top: 100% }，逐帧跟随），
+   此处不可给 top 加过渡——过渡会让猫爪滞后于边沿，无法紧贴 */
 .cal-bookmark {
-  transition: transform .18s ease, background .2s,
-    top .38s cubic-bezier(.4, 0, .2, 1);
+  transition: transform .18s ease, background .2s;
 }

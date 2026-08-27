@@ -4709,35 +4709,45 @@
       filter: drop-shadow(0 3px 10px rgba(163, 194, 232, 0.3));
       transform-origin: top center;
       transition: transform .18s ease, filter .2s;
+      animation: cal-bookmark-swing 2.8s ease-in-out infinite;
     }
     .cal-bookmark-img { width: 100%; height: 100%; pointer-events: none; }
     .cal-bookmark::before { display: none; }
     .cal-bookmark::after { display: none; }
-    .cal-bookmark:not(.open) { animation: cal-bookmark-swing 2.8s ease-in-out infinite; }
     .cal-bookmark.open { animation: none; }
+    /* 猫爪贴住日历下边沿：top: 100% 实时等于 .cal-dropdown 的当前高度。
+       收起时日历是 68px 波浪刘海（见后文版本三十四），猫爪贴其下沿；
+       拉出/收起/回弹全程逐帧跟随下边沿移动，无需 JS */
+    .cal-dropdown .cal-bookmark { top: 100%; }
     .cal-bookmark:active { transform: scale(0.92); filter: drop-shadow(0 2px 6px rgba(163, 194, 232, 0.25)); }
     @keyframes cal-bookmark-swing {
-      0%, 100% { transform: rotate(-2deg); }
-      50% { transform: rotate(2deg); }
+      0%, 100% { transform: rotate(-1deg); }
+      50% { transform: rotate(1deg); }
     }
 
+    /* .cal-dropdown 只作定位容器：高度恒等于裁剪层高度，供猫爪 top:100% 参照。
+       视觉样式（背景/波浪 clip-path/边框/阴影）全部放在 .cal-dd-clip 上，
+       否则 clip-path 会把挂在容器外的猫爪裁掉 */
     .cal-dropdown {
-      position: absolute; top: 0; left: 0; right: 0; max-height: 0; overflow: hidden;
-      background: #FFFEFB; border-bottom: 1px solid #E0EDF3; z-index: 35;
+      position: absolute; top: 0; left: 0; right: 0; z-index: 35;
+    }
+    .cal-dd-clip {
+      max-height: 68px; overflow: hidden;
+      background: #FFFEFB; border-bottom: 1px solid #E0EDF3;
       transition: max-height .32s cubic-bezier(.4,0,.2,1), box-shadow .25s;
       box-shadow: 0 0 0 rgba(0,0,0,0);
     }
     /* 过冲回弹用 padding-bottom 实现（max-height 只是上限，不会撑大盒子）。
        padding-bottom 与 max-height 同步增长：下拉到底时顺势继续向下延伸（橡皮筋），
-       再缓慢回弹，全程连续无停顿 */
+       再缓慢回弹，全程连续无停顿（起点 68px 与收起态波浪刘海衔接） */
     @keyframes cal-dropdown-bounce {
-      0%   { max-height: 0;    padding-bottom: 0; }
+      0%   { max-height: 68px; padding-bottom: 0; }
       44%  { max-height: 66vh; padding-bottom: 5vh; }
       66%  { max-height: 66vh; padding-bottom: 1.4vh; }
       82%  { max-height: 66vh; padding-bottom: 0.3vh; }
       100% { max-height: 66vh; padding-bottom: 0; }
     }
-    .cal-dropdown.open { animation: cal-dropdown-bounce .65s cubic-bezier(.25,.55,.25,1) forwards; box-shadow: 0 8px 22px rgba(44,62,80,0.06); }
+    .cal-dropdown.open .cal-dd-clip { animation: cal-dropdown-bounce .65s cubic-bezier(.25,.55,.25,1) forwards; box-shadow: 0 8px 22px rgba(44,62,80,0.06); }
     .cal-dd-content { padding: 36px 0 60px; }
     .cal-dd-title { text-align: center; padding: 14px 20px 6px; }
     .cal-dd-month-en {
@@ -4998,7 +5008,7 @@
     /* 4) 日历中间板块 → 透明玻璃质感（透出下层背景图） */
     .cal-day-scroll { background: transparent; }
     .cal-day-card { background: rgba(255,254,251,0.5); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4); }
-    .cal-dropdown { background: rgba(255,254,251,0.78); backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); }
+    .cal-dd-clip { background: rgba(255,254,251,0.78); backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); }
     .cal-day-header { border-bottom-color: rgba(163,194,232,0.25); }
     .cal-rec-row + .cal-rec-row { border-top-color: rgba(255,255,255,0.55); }
 
@@ -5072,7 +5082,8 @@
     .module-pet-switch strong { color: rgba(74,100,137,0.92); }
     .module-pet-switch { height: 34px; }
     .module-pet-switch .avatar-placeholder { width: 22px; height: 22px; }
-    .cal-rec-imgs.count-1 .img-thumb { aspect-ratio: 4 / 3; font-size: 44px; }
+    /* 单图：正方形缩略图，宽度占满卡片内容区（用户规则：1图全宽正方形/2图平分/3图三等分/4图2×2/更多每行3张） */
+    .cal-rec-imgs.count-1 .img-thumb { aspect-ratio: 1 / 1; font-size: 44px; }
 
     /* ===== 版本十：隐藏顶部标题 + AI/日历 header 仿档案 + 背景拉通 + 日历书签玻璃化 ===== */
     /* 1) 所有界面顶部中间文字全部隐藏 */
@@ -5158,8 +5169,10 @@
     }
     .ask-textarea::placeholder { color: #A8B8CC; }
 
-    /* 2) 宠物日历：猫爪书签（top 8→92px）与当天详情卡片（padding-top 10→100px）整体下移，
-          离开顶部状态栏区域；JS 基准同步改为 92（CalPanel.tsx bm.style.top） */
+    /* 2) 宠物日历：当天详情卡片（padding-top 10→100px）下移离开顶部状态栏区域。
+          猫爪书签已移入 .cal-dropdown 内，位置由
+          .cal-dropdown .cal-bookmark { top: 100% } 接管（贴住日历下边沿），
+          此处 92px 仅作历史回退值，正常情况下不生效 */
     .cal-bookmark { top: 92px; }
     .cal-day-scroll { padding-top: 100px; }
 
@@ -5370,14 +5383,8 @@
       text-shadow: 0 1px 3px rgba(255, 255, 255, 0.85), 0 0 8px rgba(255, 255, 255, 0.6);
     }
 
-    /* 3) 日历下拉框：展开后内容可滚动，但隐藏滚动条
-       （动画展开过程中 max-height 小于内容高度，overflow-y:auto 会闪现滚动条） */
-    .cal-dropdown.open {
-      overflow-y: auto;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-    .cal-dropdown.open::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    /* 3) 日历下拉框：展开后内容可滚动由 .cal-dd-content 自身承担（见版本三十六），
+       容器不再设 overflow（.cal-dropdown 须保持可见，猫爪书签挂在容器外沿） */
 
     /* ===================== 4) 添加宠物表单 ===================== */
     /* 注：原生 <input> 的样式统一走 .capsule-input 类选择器（见版本二十九段），
@@ -5606,12 +5613,12 @@
       transform: scale(0.93);
     }
 
-    /* 3) 日历下拉按钮（猫爪书签）专属回弹动画：每次点击完整播放 */
+    /* 3) 日历下拉按钮（猫爪书签）专属回弹动画：每次点击完整播放（幅度收敛，弹动更轻） */
     @keyframes cal-bookmark-bounce {
       0%   { transform: scale(1) rotate(0deg); }
-      30%  { transform: scale(0.8) rotate(-10deg); }
-      60%  { transform: scale(1.16) rotate(6deg); }
-      80%  { transform: scale(0.96) rotate(-2deg); }
+      30%  { transform: scale(0.86) rotate(-6deg); }
+      60%  { transform: scale(1.1) rotate(4deg); }
+      80%  { transform: scale(0.97) rotate(-1.5deg); }
       100% { transform: scale(1) rotate(0deg); }
     }
     .cal-bookmark.bounce { animation: cal-bookmark-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -5657,14 +5664,16 @@
     }
 
     /* 2) 日历下拉：关闭时顶部露出波浪形刘海边（68px），示意此处有日历；
-          展开动画从刘海位置（68px）起跳，衔接自然 */
-    .cal-dropdown {
+          展开动画从刘海位置（68px）起跳，衔接自然。
+          波浪 clip-path/背景/阴影挂在裁剪层 .cal-dd-clip 上（挂容器上会裁掉猫爪书签），
+          猫爪 top:100% 参照容器高度 = 裁剪层高度，收起时正好贴住刘海下沿 */
+    .cal-dd-clip {
       max-height: 68px;
       border-radius: 0;
       clip-path: path('M 0,0 L 390,0 L 390.0,54.0 L 383.5,50.3 L 377.0,46.9 L 370.5,44.3 L 364.0,42.6 L 357.5,42.0 L 351.0,42.6 L 344.5,44.3 L 338.0,46.9 L 331.5,50.3 L 325.0,54.0 L 318.5,57.7 L 312.0,61.1 L 305.5,63.7 L 299.0,65.4 L 292.5,66.0 L 286.0,65.4 L 279.5,63.7 L 273.0,61.1 L 266.5,57.7 L 260.0,54.0 L 253.5,50.3 L 247.0,46.9 L 240.5,44.3 L 234.0,42.6 L 227.5,42.0 L 221.0,42.6 L 214.5,44.3 L 208.0,46.9 L 201.5,50.3 L 195.0,54.0 L 188.5,57.7 L 182.0,61.1 L 175.5,63.7 L 169.0,65.4 L 162.5,66.0 L 156.0,65.4 L 149.5,63.7 L 143.0,61.1 L 136.5,57.7 L 130.0,54.0 L 123.5,50.3 L 117.0,46.9 L 110.5,44.3 L 104.0,42.6 L 97.5,42.0 L 91.0,42.6 L 84.5,44.3 L 78.0,46.9 L 71.5,50.3 L 65.0,54.0 L 58.5,57.7 L 52.0,61.1 L 45.5,63.7 L 39.0,65.4 L 32.5,66.0 L 26.0,65.4 L 19.5,63.7 L 13.0,61.1 L 6.5,57.7 L 0.0,54.0 Z');
       box-shadow: 0 3px 10px rgba(163, 194, 232, 0.25);
     }
-    .cal-dropdown.open {
+    .cal-dropdown.open .cal-dd-clip {
       border-radius: 0;
       clip-path: none;
       box-shadow: 0 8px 22px rgba(44, 62, 80, 0.06);
@@ -5682,8 +5691,9 @@
           （此处不再重复引用图片，避免小程序端 base64 重复内嵌撑大 wxss） */
 
     /* 2) 日历月份翻页按钮：移到拉出日历的下边界上（左右各一枚圆形按钮）
-       按钮直接挂在 .cal-dropdown 下（不在滚动内容里），才能钉在面板底边 */
-    .cal-dropdown.open { overflow: hidden; }
+       按钮直接挂在 .cal-dropdown 下（不在滚动内容里），才能钉在面板底边。
+       容器不可设 overflow:hidden——猫爪书签挂在容器外沿（top:100%），
+       裁剪职责已由 .cal-dd-clip 承担 */
     .cal-dd-content {
       overflow-y: auto;
       max-height: 66vh;
@@ -5761,12 +5771,12 @@
 
     /* 5) 日历下拉面板背景：23.jpg 降饱和度版（图片本身已降饱和，不再叠加白色罩层）；
           关闭态刘海边：暖黄 #FFE066 纯色（饱和度比 #FFD93D 略低）+ 波浪形（波浪 clip-path 在 5520 块定义） */
-    .cal-dropdown {
+    .cal-dd-clip {
       background: #FFE899;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
     }
-    .cal-dropdown.open {
+    .cal-dropdown.open .cal-dd-clip {
       background: #FFFEFB url('../assets/calendar-dropdown-bg.jpg') center / cover no-repeat;
     }
 
@@ -6329,6 +6339,12 @@
       max-width: 100%;
       overflow-wrap: break-word;
       word-break: break-word;
+    }
+
+    /* ===== 版本五十七：成长足迹悬浮按钮避开底部导航栏 ===== */
+    /* 导航栏 bottom = 10px + 安全区，总高约 64px；按钮抬到导航栏上方（含全面屏安全区） */
+    .cal-fab.growth-fab {
+      bottom: calc(104px + env(safe-area-inset-bottom));
     }
 
 /* ============================================================

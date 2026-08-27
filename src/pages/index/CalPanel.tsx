@@ -1,4 +1,4 @@
-import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
+import { useState, type Dispatch, type SetStateAction } from 'react'
 import { View, Text, Input, Textarea, Image } from '@tarojs/components'
 import { CAL_PETS, CAL_MEMBERS, CalRecord, CalTodo } from './data'
 import pawHandlePng from '../../assets/cal-paw-handle.png'
@@ -36,18 +36,8 @@ export default function CalPanel({ onToast, records, todos, onRecordsChange: set
   const [addText, setAddText] = useState('')
   const [doneTodo, setDoneTodo] = useState<CalTodo | null>(null)
 
-  // 猫爪书签随日历下拉一起下移（原型逻辑：top = 6 + min(下拉内容高度, 440)）
-  // Taro View 不稳定转发 ref，这里按 id 直接取 DOM（H5 端）
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => {
-      const dd = document.getElementById('calDropdown')
-      const bm = document.getElementById('calBookmark')
-      if (!dd || !bm) return
-      const h = calOpen ? Math.min(dd.scrollHeight || 0, 440) : 0
-      bm.style.top = (92 + h) + 'px'
-    })
-    return () => cancelAnimationFrame(raf)
-  }, [calOpen])
+  // 猫爪书签贴着日历下边沿一起移动：纯 CSS 实现（.cal-dropdown .cal-bookmark { top: max(92px, 100%) }），
+  // 日历收起时高度为 0，猫爪停在 92px（避开顶部状态栏）；拉出后 top = 100% 实时贴住下边沿（含回弹）
 
   const getPet = (id: string) => CAL_PETS.find(p => p.id === id)!
   const getBy = (by: string) => CAL_MEMBERS[by] || { name: by }
@@ -160,14 +150,15 @@ export default function CalPanel({ onToast, records, todos, onRecordsChange: set
 
   return (
     <View className='cal-module-content' id='calModuleContent'>
-      <View className={`cal-bookmark${calOpen ? ' open' : ''}${bmBounce ? ' bounce' : ''}`} id='calBookmark'
-        onClick={(e) => { e.stopPropagation(); toggleCal() }}
-        onAnimationEnd={() => setBmBounce(false)}>
-        <Image className='cal-bookmark-img' src={pawHandlePng} mode='aspectFit' />
-      </View>
-
       <View className={`cal-dropdown${calOpen ? ' open' : ''}`} id='calDropdown'>
-        <View className='cal-dd-content'>
+        <View className={`cal-bookmark${calOpen ? ' open' : ''}${bmBounce ? ' bounce' : ''}`} id='calBookmark'
+          onClick={(e) => { e.stopPropagation(); toggleCal() }}
+          onAnimationEnd={() => setBmBounce(false)}>
+          <Image className='cal-bookmark-img' src={pawHandlePng} mode='aspectFit' />
+        </View>
+
+        <View className='cal-dd-clip'>
+          <View className='cal-dd-content'>
           <View className='cal-dd-title'>
             <View className='cal-dd-month-en' id='calMonthEn'>{MONTH_EN[viewYM.m]}</View>
             <View className='cal-dd-month-cn' id='calMonthCn'>{monthCnSpaced}</View>
@@ -194,6 +185,7 @@ export default function CalPanel({ onToast, records, todos, onRecordsChange: set
               ))}
             </View>
           </View>
+        </View>
         </View>
         <View className='cal-turn-hit prev' onClick={(e) => { e.stopPropagation(); turnMonth('prev') }}>‹</View>
         <View className='cal-turn-hit next' onClick={(e) => { e.stopPropagation(); turnMonth('next') }}>›</View>
