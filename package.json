@@ -34,6 +34,7 @@
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.24.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.6.2",
     "@tarojs/cli": "4.2.1",
     "@tarojs/taro-loader": "4.2.1",
@@ -47,6 +48,6 @@
     "sass-loader": "^16.0.0",
     "stylelint": "^14.4.0",
     "typescript": "^5.1.0",
-    "webpack": "^5.78.0"
+    "webpack": "5.91.0"
   }
 }
