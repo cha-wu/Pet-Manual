@@ -2,8 +2,8 @@
    宠物小册 - 全局样式
    原型（红绘版 HTML）CSS 全量引入，保证 1:1 复刻
    ============================================ */
-@import './styles/proto.scss';
-@import './styles/design-tokens.scss';
+@use './styles/proto.scss';
+@use './styles/design-tokens.scss';
 
 /* Taro H5 容器适配：让页面容器 behave like body */
 page,
@@ -19,12 +19,12 @@ taro-page-core {
 
 /* 宠物档案整页背景 */
 #albumModuleScreen {
-  background: url('./assets/manual-bg.jpg') center / cover no-repeat;
+  background: url('../public/export.jpg') center / cover no-repeat;
 }
 
 /* 宠物日历整页背景：28.jpg 黄底蓝点 */
 #calendarModuleScreen {
-  background: #FFFEFB url('./assets/calendar-bg.jpg') center / cover no-repeat;
+  background: #FFFEFB url('../public/export.jpg') center / cover no-repeat;
 }
 
 /* 首次使用引导背景 */
