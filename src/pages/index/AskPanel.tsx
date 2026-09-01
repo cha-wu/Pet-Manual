@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { View, Input, RichText, Image } from '@tarojs/components'
 import { ASK_PRESETS, ASK_MOCKS } from './data'
 import eyesImg from '../../assets/ai-cat-eyes-check.png'
+import aiCatImg from '../../assets/ai-cat.png'
 
 interface HistoryItem { q: string; time: string }
 type ElfMood = 'neutral' | 'thinking' | 'happy' | 'wink'
@@ -123,9 +124,9 @@ export default function AskPanel() {
         </View>
         <View className={`cat-container elf-mood-${elfMood}${isThinking ? ' thinking' : ''}${answerShow ? ' no-float' : ''}`} id='catContainer'>
           <View className='cat-img-frame'>
-            {/* 猫咪图片：默认睁眼，只有 AI 回答（happy）时覆盖眯眼笑 */}
-            <View className='cat-img-base' />
-            {elfMood === 'happy' && (
+            {/* 猫咪图片：默认睁眼；思考态与回答完成态都覆盖眯眼笑（仅两条蓝弯线） */}
+            <Image className='cat-img-base' src={aiCatImg} mode='aspectFit' />
+            {(elfMood === 'thinking' || elfMood === 'happy') && (
               <Image className='cat-eyes-overlay' src={eyesImg} mode='aspectFit' />
             )}
           </View>

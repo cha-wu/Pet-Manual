@@ -4475,7 +4475,7 @@
     .onboarding-choice:first-child { background: rgba(245,198,192,0.35); }
     .onboarding-choice:last-child { background: rgba(191,224,241,0.35); }
     .onboarding-skip { color: #2A2520; background: transparent; font-family: var(--handwritten); }
-    .onboarding-summary { border: var(--glass-border); border-radius: 12px; background: rgba(245,214,138,0.4); box-shadow: var(--glass-shadow); }
+    .onboarding-summary { border: var(--glass-border); border-radius: 12px; background: #F0E0B0; box-shadow: var(--glass-shadow); }
     .app-tabs { border: 1px solid rgba(255,255,255,0.5); border-radius: 32px; color: rgba(74,100,137,0.92); background: rgba(255,255,255,0.22); box-shadow: 0 8px 26px rgba(74,100,137,0.12), inset 0 1px 0 rgba(255,255,255,0.5); backdrop-filter: blur(22px) saturate(1.4); -webkit-backdrop-filter: blur(22px) saturate(1.4); }
     .app-tabs .app-tab,
     .app-tabs .app-tab + .app-tab { color: rgba(74,100,137,0.92); border-left-color: transparent; background: transparent; font-family: var(--handwritten); }
@@ -4546,7 +4546,6 @@
     .cat-img-base {
       width: 100%;
       height: 100%;
-      background: url('../assets/ai-cat.png') center / contain no-repeat;
       filter: drop-shadow(0 6px 14px rgba(74, 100, 137, 0.18));
     }
     .cat-eyes-overlay {
@@ -4711,7 +4710,7 @@
       display: flex; flex-direction: column; background: #F5EFE6; overflow: hidden;
     }
     .cal-bookmark {
-      position: absolute; top: 8px; right: 16px; width: 48px; height: 70px;
+      position: absolute; top: 8px; right: 16px; width: 66px; height: 96px;
       display: flex; align-items: center; justify-content: center;
       background: transparent;
       cursor: pointer; z-index: 36;
@@ -4725,13 +4724,16 @@
     .cal-bookmark::after { display: none; }
     .cal-bookmark.open { animation: none; }
     /* 猫爪贴住日历下边沿：top: 100% 实时等于 .cal-dropdown 的当前高度。
-       收起时日历是 68px 波浪刘海（见后文版本三十四），猫爪贴其下沿；
+       收起时日历是 68px 主题蓝刘海（见后文版本三十四），猫爪贴其下沿；
        拉出/收起/回弹全程逐帧跟随下边沿移动，无需 JS */
     .cal-dropdown .cal-bookmark { top: 100%; }
-    .cal-bookmark:active { transform: scale(0.92); filter: drop-shadow(0 2px 6px rgba(163, 194, 232, 0.25)); }
+    /* 展开态：猫爪图片顶部有 ~10px 透明留白（96px 显示高度下约 6px），
+       上移 6px 补偿，让可见猫爪紧贴日历下边沿 */
+    .cal-dropdown.open .cal-bookmark { top: calc(100% - 6px); }
+    .cal-bookmark:active { transform: scale(0.96); filter: drop-shadow(0 2px 6px rgba(163, 194, 232, 0.25)); }
     @keyframes cal-bookmark-swing {
-      0%, 100% { transform: rotate(-1deg); }
-      50% { transform: rotate(1deg); }
+      0%, 100% { transform: rotate(-0.5deg); }
+      50% { transform: rotate(0.5deg); }
     }
 
     /* .cal-dropdown 只作定位容器：高度恒等于裁剪层高度，供猫爪 top:100% 参照。
@@ -5629,12 +5631,12 @@
       transform: scale(0.93);
     }
 
-    /* 3) 日历下拉按钮（猫爪书签）专属回弹动画：每次点击完整播放（幅度收敛，弹动更轻） */
+    /* 3) 日历下拉按钮（猫爪书签）专属回弹动画：每次点击完整播放（幅度再次收敛，弹动更轻） */
     @keyframes cal-bookmark-bounce {
       0%   { transform: scale(1) rotate(0deg); }
-      30%  { transform: scale(0.86) rotate(-6deg); }
-      60%  { transform: scale(1.1) rotate(4deg); }
-      80%  { transform: scale(0.97) rotate(-1.5deg); }
+      30%  { transform: scale(0.93) rotate(-3deg); }
+      60%  { transform: scale(1.04) rotate(2deg); }
+      80%  { transform: scale(0.985) rotate(-1deg); }
       100% { transform: scale(1) rotate(0deg); }
     }
     .cal-bookmark.bounce { animation: cal-bookmark-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -5679,8 +5681,7 @@
       max-width: none;
     }
 
-    /* 2) 日历下拉：关闭时顶部露出波浪形刘海边（68px），示意此处有日历；
-          展开动画从刘海位置（68px）起跳，衔接自然。
+    /* 2) 日历下拉：关闭时顶部露出波浪形主题蓝刘海边（68px）；
           波浪 clip-path/背景/阴影挂在裁剪层 .cal-dd-clip 上（挂容器上会裁掉猫爪书签），
           猫爪 top:100% 参照容器高度 = 裁剪层高度，收起时正好贴住刘海下沿 */
     .cal-dd-clip {
@@ -5688,7 +5689,19 @@
       border-radius: 0;
       clip-path: path('M 0,0 L 390,0 L 390.0,54.0 L 383.5,50.3 L 377.0,46.9 L 370.5,44.3 L 364.0,42.6 L 357.5,42.0 L 351.0,42.6 L 344.5,44.3 L 338.0,46.9 L 331.5,50.3 L 325.0,54.0 L 318.5,57.7 L 312.0,61.1 L 305.5,63.7 L 299.0,65.4 L 292.5,66.0 L 286.0,65.4 L 279.5,63.7 L 273.0,61.1 L 266.5,57.7 L 260.0,54.0 L 253.5,50.3 L 247.0,46.9 L 240.5,44.3 L 234.0,42.6 L 227.5,42.0 L 221.0,42.6 L 214.5,44.3 L 208.0,46.9 L 201.5,50.3 L 195.0,54.0 L 188.5,57.7 L 182.0,61.1 L 175.5,63.7 L 169.0,65.4 L 162.5,66.0 L 156.0,65.4 L 149.5,63.7 L 143.0,61.1 L 136.5,57.7 L 130.0,54.0 L 123.5,50.3 L 117.0,46.9 L 110.5,44.3 L 104.0,42.6 L 97.5,42.0 L 91.0,42.6 L 84.5,44.3 L 78.0,46.9 L 71.5,50.3 L 65.0,54.0 L 58.5,57.7 L 52.0,61.1 L 45.5,63.7 L 39.0,65.4 L 32.5,66.0 L 26.0,65.4 L 19.5,63.7 L 13.0,61.1 L 6.5,57.7 L 0.0,54.0 Z');
       box-shadow: 0 3px 10px rgba(163, 194, 232, 0.25);
+      /* 收起态文字遮挡：裁剪层内垫一块不透明主题蓝蒙层（同样被波浪 clip-path 裁剪），
+         盖住 August/八月 等标题文字；展开态隐藏，露出背景图。
+         蒙层在裁剪层内部 → 波浪缺口处仍透出页面底色，波浪形状得以保留 */
+      position: relative;
     }
+    .cal-dd-clip::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 68px;
+      background: #A3C2E8;
+      pointer-events: none;
+    }
+    .cal-dropdown.open .cal-dd-clip::before { display: none; }
     .cal-dropdown.open .cal-dd-clip {
       border-radius: 0;
       clip-path: none;
@@ -5727,68 +5740,74 @@
     /* #endif */
     .cal-turn-hit {
       position: absolute;
-      bottom: 16px;
-      width: 38px;
-      height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      font-weight: 700;
-      line-height: 1;
-      color: rgba(127, 165, 214, 0.95);
-      background: rgba(255, 255, 255, 0.88);
-      border: 1px solid rgba(163, 194, 232, 0.55);
+      bottom: 10px;
+      width: 48px;
+      height: 48px;
+      background: transparent;
+      border: none;
       border-radius: 50%;
-      box-shadow: 0 3px 10px rgba(163, 194, 232, 0.35);
+      box-shadow: none;
       cursor: pointer;
       z-index: 5;
-      transition: transform .18s, background .2s, box-shadow .2s;
       user-select: none;
+      -webkit-tap-highlight-color: transparent; /* 禁止 H5/移动端点击高亮 */
+      outline: none;
     }
+    /* 额外保险：即使框架自动给 active 加默认背景，也强制透明 */
+    .cal-turn-hit:active { background: transparent; box-shadow: none; }
+    /* 箭头用 CSS 边框画（旋转方块），在 48px 圆形热区内绝对居中，不依赖字体基线；
+       颜色与收起态刘海边（#A3C2E8）一致，4.5px 略加粗 */
+    .cal-turn-hit::before {
+      content: '';
+      display: block;
+      width: 13px;
+      height: 13px;
+      border-left: 4.5px solid #A3C2E8;
+      border-bottom: 4.5px solid #A3C2E8;
+      transform: rotate(45deg); /* 左箭头 ‹ */
+      margin: auto;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+    }
+    .cal-turn-hit.next::before { transform: rotate(-135deg); /* 右箭头 › */ }
     .cal-turn-hit.prev { left: 16px; }
     .cal-turn-hit.next { right: 16px; }
-    .cal-turn-hit:active {
-      transform: scale(0.88);
-      background: rgba(127, 165, 214, 0.18);
-      box-shadow: 0 2px 6px rgba(163, 194, 232, 0.25);
-    }
 
     /* 3) 头部右侧改成纯年月显示 */
     .cal-dd-head { justify-content: space-between; align-items: center; }
     .cal-dd-ym { font-size: 12px; font-weight: 700; color: var(--ink); letter-spacing: 1px; }
 
-    /* 4) 日历表格容器：切换月份时执行手册式 3D 翻页 */
+    /* 4) 日历表格容器：切换月份时左右滑动（水平位移 + 淡入淡出） */
     .cal-dd-sheet {
-      perspective: 1200px;
-      transform-style: preserve-3d;
+      overflow: hidden; /* 滑出/滑入的格子被面板裁掉，不横向溢出 */
     }
     .cal-dd-sheet .cal-dd-grid,
     .cal-dd-sheet .cal-dd-weekrow {
-      transform-style: preserve-3d;
-      backface-visibility: hidden;
-      transform-origin: left center;
       transition: transform 0s;
     }
+    /* 下一个月：旧内容向左滑出（下一个箭头 › 的指向） */
     @keyframes cal-turn-next {
-      0%   { transform: rotateY(0deg); }
-      50%  { transform: rotateY(-95deg) scale(0.96); filter: brightness(0.92); }
-      100% { transform: rotateY(0deg); }
+      0%   { transform: translateX(0); opacity: 1; }
+      45%  { transform: translateX(-46%); opacity: 0; }
+      46%  { transform: translateX(46%); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
     }
+    /* 上一个月：旧内容向右滑出 */
     @keyframes cal-turn-prev {
-      0%   { transform: rotateY(0deg); }
-      50%  { transform: rotateY(95deg) scale(0.96); filter: brightness(0.92); }
-      100% { transform: rotateY(0deg); }
+      0%   { transform: translateX(0); opacity: 1; }
+      45%  { transform: translateX(46%); opacity: 0; }
+      46%  { transform: translateX(-46%); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
     }
     .cal-dd-sheet.turn-next .cal-dd-grid,
     .cal-dd-sheet.turn-next .cal-dd-weekrow { animation: cal-turn-next .52s cubic-bezier(.55, .05, .25, 1); }
     .cal-dd-sheet.turn-prev .cal-dd-grid,
     .cal-dd-sheet.turn-prev .cal-dd-weekrow { animation: cal-turn-prev .52s cubic-bezier(.55, .05, .25, 1); }
 
-    /* 5) 日历下拉面板背景：23.jpg 降饱和度版（图片本身已降饱和，不再叠加白色罩层）；
-          关闭态刘海边：暖黄 #FFE066 纯色（饱和度比 #FFD93D 略低）+ 波浪形（波浪 clip-path 在 5520 块定义） */
+    /* 5) 日历下拉面板背景：下拉背景图（calendar-dropdown-bg.jpg，降饱和偏蓝版）；
+          关闭态刘海边：主题蓝 #A3C2E8 纯色不透明（不透出背后日历内容）+ 波浪形（波浪 clip-path 在 5520 块定义） */
     .cal-dd-clip {
-      background: #FFE899;
+      background: #A3C2E8;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
     }

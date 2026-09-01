@@ -2,6 +2,7 @@ import { useState, type Dispatch, type SetStateAction } from 'react'
 import { View, Text, Input, Textarea, Image } from '@tarojs/components'
 import { CAL_PETS, CAL_MEMBERS, CalRecord, CalTodo } from './data'
 import pawHandlePng from '../../assets/cal-paw-handle.png'
+import pawHandleRoundPng from '../../assets/cal-paw-handle-round.png'
 
 const pad = (n: number) => (n < 10 ? '0' + n : '' + n)
 const fmt = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
@@ -154,7 +155,8 @@ export default function CalPanel({ onToast, records, todos, onRecordsChange: set
         <View className={`cal-bookmark${calOpen ? ' open' : ''}${bmBounce ? ' bounce' : ''}`} id='calBookmark'
           onClick={(e) => { e.stopPropagation(); toggleCal() }}
           onAnimationEnd={() => setBmBounce(false)}>
-          <Image className='cal-bookmark-img' src={pawHandlePng} mode='aspectFit' />
+          {/* 收起态用圆顶尾部猫爪，展开态换成直边尾部猫爪 */}
+          <Image className='cal-bookmark-img' src={calOpen ? pawHandlePng : pawHandleRoundPng} mode='aspectFit' />
         </View>
 
         <View className='cal-dd-clip'>
@@ -187,8 +189,9 @@ export default function CalPanel({ onToast, records, todos, onRecordsChange: set
           </View>
         </View>
         </View>
-        <View className='cal-turn-hit prev' onClick={(e) => { e.stopPropagation(); turnMonth('prev') }}>‹</View>
-        <View className='cal-turn-hit next' onClick={(e) => { e.stopPropagation(); turnMonth('next') }}>›</View>
+        {/* 箭头由 CSS ::before 绘制（proto.scss .cal-turn-hit），保证在热区内绝对居中 */}
+        <View className='cal-turn-hit prev' onClick={(e) => { e.stopPropagation(); turnMonth('prev') }} />
+        <View className='cal-turn-hit next' onClick={(e) => { e.stopPropagation(); turnMonth('next') }} />
       </View>
 
       <View className='cal-day-scroll' id='calDayScroll'>

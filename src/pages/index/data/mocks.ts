@@ -1,6 +1,6 @@
-/* 原型数据 1:1 搬移 */
+/* 原型数据 1:1 搬移（离线展示用，API_ENABLED=true 后由 services 层数据替代） */
 
-export interface AskPreset { q: string; a: string }
+import type { AskPreset, CalRecord, CalTodo, PetRecord, FamilyData } from './types'
 
 export const ASK_PETS = [
   { id: 'all', name: '全部动物', info: '不限宠物，通用提问' },
@@ -32,16 +32,6 @@ export const CAL_PETS = [
 ]
 export const CAL_MEMBERS: Record<string, { name: string }> = { ma: { name: '妈妈' }, ba: { name: '爸爸' } }
 
-export interface CalRecord {
-  date: string; pet: string; cat: 'medical' | 'daily'; medType: string | null
-  title: string; text: string; imgs: string[]; by: string; time: string
-}
-export interface CalTodo {
-  id: string; pet: string; title: string; remindDate: string
-  cycle: 'once' | 'quarterly' | 'yearly'; cycleName: string
-  status: 'pending' | 'completed'; by: string
-}
-
 export const INIT_CAL_RECORDS: CalRecord[] = [
   { date: '2026-08-14', pet: 'mi', cat: 'medical', medType: '驱虫', title: '体外驱虫', text: '今天给咪咪做了体外驱虫，医生说状态很好。', imgs: ['🧴', '🩺'], by: 'ma', time: '10:20' },
   { date: '2026-08-14', pet: 'dou', cat: 'daily', medType: null, title: '学会握手啦', text: '豆豆今天终于学会握手了！奖励了最爱的小零食。', imgs: ['🐾', '🍪'], by: 'ba', time: '18:05' },
@@ -55,31 +45,6 @@ export const INIT_CAL_TODOS: CalTodo[] = [
 ]
 
 /* 档案册（书）数据 */
-export interface PetRecord {
-  id: string
-  name: string
-  title: string
-  quote: string
-  years: string
-  type: string
-  birthDate: string
-  arrivalDate: string
-  tags: string[]
-  personalityQuestions: { title: string; summary: string; detail: string }[]
-  health: {
-    overall: string
-    allergies: { label: string; value: string; note: string }
-    diseases: { label: string; value: string; note: string }
-    medications: { label: string; value: string; note: string }
-    vaccines: { label: string; value: string; note: string }
-  }
-  updated: string
-  backFamily: string
-  weights: { date: string; value: string }[]
-  events: { type: string; date: string; title: string; content: string; author: string }[]
-  birthdays: { date: string; age: string; title: string; wish: string; mediaLabel: string }[]
-}
-
 export const PETS: PetRecord[] = [
   {
     id: 'milo',
@@ -162,24 +127,6 @@ export const PETS: PetRecord[] = [
 ]
 
 export const CHAPTER_NAMES = ['封面', '身份名片', '个性说明书', '健康资料', '生日纪念册', '成长足迹', '封底']
-
-export type FamilyRole = '主人' | '管理员' | '成员'
-export type FamilyMemberStatus = 'active' | 'pending' | 'rejected'
-
-export interface FamilyMember {
-  name: string
-  role: FamilyRole
-  status: FamilyMemberStatus
-  appliedAt: string
-  reviewedAt: string
-}
-
-export interface FamilyData {
-  name: string
-  code: string
-  members: FamilyMember[]
-  pets: { id: string; name: string }[]
-}
 
 export const FAMILY: FamilyData = {
   name: '木棉之家',
